@@ -2,6 +2,15 @@ require 'active_record'
 
 class Movie < ActiveRecord::Base
   #self.abstract_class = true
+   def self.all_ratings
+    rating_list = []
+    Movie.all.each do |movie|
+      if rating_list.find_index(movie.rating).blank? == true
+        rating_list.push(movie.rating)
+      end
+    end
+    return rating_list
+  end
 end
 # starwars = Movie.create!(:title => 'Star Wars',
 # 	  :release_date => '25/4/1977', :rating => 'PG')

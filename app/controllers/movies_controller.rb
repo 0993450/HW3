@@ -20,7 +20,10 @@ class MoviesController < ApplicationController
 
     if sort_by.blank? == false
       @movies = Movie.order(ordering)
-    end   
+    end 
+
+    #all_ratings
+    @all_ratings = Movie.all_ratings
   end
 
   def new
