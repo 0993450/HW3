@@ -25,11 +25,9 @@ class MoviesController < ApplicationController
     #all_ratings
     @all_ratings = Movie.all_ratings
     if params[:ratings].blank? == false
-      @all_ratings = @all_ratings - params[:ratings].keys
+      @all_ratings = params[:ratings].keys
       @movies = Movie.where(rating: @all_ratings)
     end
-
-
   end
 
   def new
