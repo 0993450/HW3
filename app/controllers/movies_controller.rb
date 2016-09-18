@@ -24,9 +24,10 @@ class MoviesController < ApplicationController
 
     #all_ratings
     @all_ratings = Movie.all_ratings
+    @checked_ratings = {}
     if params[:ratings].blank? == false
-      @all_ratings = params[:ratings].keys
-      @movies = Movie.where(rating: @all_ratings)
+      @checked_ratings = params[:ratings].keys
+      @movies = Movie.where(rating: @checked_ratings)
     end
   end
 
