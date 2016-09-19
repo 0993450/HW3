@@ -8,8 +8,9 @@ class MoviesController < ApplicationController
   end
 
   def index
+
     @movies = Movie.all
-    #soted_by
+    #sorted_by
     sort_by = params[:sort_by]
     case sort_by
     when 'title'
@@ -18,16 +19,21 @@ class MoviesController < ApplicationController
       ordering,@date_header = {:release_date => :asc}
     end
 
-    if sort_by.blank? == false
-      @movies = Movie.order(ordering)
-    end 
-
     #all_ratings
     @all_ratings = Movie.all_ratings
     @checked_ratings = {}
     if params[:ratings].blank? == false
       @checked_ratings = params[:ratings].keys
+    end
+
+    if sort_by.blank? == false and @checked_ratings == {}
+      @movies = Movie.order(ordering)
+    end
+    if sort_by.blank? == true and @checked_ratings != {}
       @movies = Movie.where(rating: @checked_ratings)
+    end
+    if sort_by.blank? == false and @checked_ratings != {}
+      @movies = Movie.where(rating: @checked_ratings).order(ordering)
     end
   end
 
