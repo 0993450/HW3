@@ -31,6 +31,31 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
+Given /the following movies exist/ do |movies_table|
+  movies_table.hashes.each do |movie|
+    Movie.create!(movie)
+  end
+end
+
+Given /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
+  rating_list.split(', ').each do |rating|
+    rating = "ratings_#{rating}"
+    if uncheck
+      uncheck(rating.to_s)
+    else
+      check(rating.to_s)
+    end
+  end
+end
+
+Then /I should see all of the movies/ do
+  movies = Movie.all
+end
+
+Then /I should see "(.*)" before "(.*)"/ do |e1, e2|
+  assert page.body =~ /#{e1}.*#{e2}/m, "#{e1} was not before #{e2}"
+end
+
 # Single-line step scoper
 When /^(.*) within (.*[^:])$/ do |step, parent|
   with_scope(parent) { When step }
@@ -100,6 +125,27 @@ end
 
 When /^(?:|I )attach the file "([^"]*)" to "([^"]*)"$/ do |path, field|
   attach_file(field, File.expand_path(path))
+end
+
+Given /I have added "(.*)" with rating "(.*)"/ do |title, rating|
+  steps %Q{
+    Given I am on the Create New Movie page
+    When  I fill in "Title" with "#{title}"
+    And   I select "#{rating}" from "Rating"
+    And   I press "Save Changes"
+  }
+end
+
+When /I check all ratings/ do
+  steps %Q{
+    I check the following ratings: PG, G, R, PG-13, NC-17
+  }
+end
+
+Then /I should see "(.*)" before "(.*)" on (.*)/ do |string1, string2, path|
+  step "I am on #{path}"
+  regexp = /#{string1}.*#{string2}/m #  /m means match across newlines
+  page.body.should =~ regexp
 end
 
 Then /^(?:|I )should see "([^"]*)"$/ do |text|
