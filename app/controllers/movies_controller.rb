@@ -1,10 +1,15 @@
 class MoviesController < ApplicationController
 
+  def search_tmdb
+    # simulate failure
+    flash[:warning] = "'#{params[:search_terms]}' was not found in TMDb."
+    redirect_to movies_path
+  end
+
   def show
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
-
   end
 
   def index
@@ -21,20 +26,16 @@ class MoviesController < ApplicationController
 
     #all_ratings
     @all_ratings = Movie.all_ratings
-    @checked_ratings = {}
+    @checked_ratings = @all_ratings
     if params[:ratings].blank? == false
       @checked_ratings = params[:ratings].keys
     end
+    if params[:commit].blank? == false and params[:ratings].blank? == true
+      @checked_ratings = {}
+    end
 
-    if sort_by.blank? == false and @checked_ratings == {}
-      @movies = Movie.order(ordering)
-    end
-    if sort_by.blank? == true and @checked_ratings != {}
-      @movies = Movie.where(rating: @checked_ratings)
-    end
-    if sort_by.blank? == false and @checked_ratings != {}
-      @movies = Movie.where(rating: @checked_ratings).order(ordering)
-    end
+    @movies = Movie.where(rating: @checked_ratings).order(ordering)
+
   end
 
   def new
